@@ -17,7 +17,11 @@ public class DiContainer
     {
         var builder = new ContainerBuilder();
 
-        builder.RegisterType<CircularLayout>().As<ILayout>();
+        builder.Register(c =>
+            {
+                var layoutProperties = c.Resolve<CircularLayoutProperties>();
+                return CircularLayout.Create(layoutProperties).GetValueOrThrow();
+            }).As<ILayout>();
         builder.RegisterType<CircularCloudLayouter>().As<ICircularCloudLayouter>();
         builder.RegisterType<ColorGetter.ColorGetter>().As<IColorGetter>();
         builder.RegisterType<TxtReader>().As<IReader>();
