@@ -7,7 +7,9 @@ public class DocxReader : IReader
 {
     public bool CanRead(string path)
     {
-        return path.Split('.')[^1].Equals("docx", StringComparison.InvariantCultureIgnoreCase);
+        var isDocxFile = path.Split('.')[^1].Equals("docx", StringComparison.InvariantCultureIgnoreCase);
+        var fileExists = File.Exists(path);
+        return isDocxFile && fileExists;
     }
 
     public List<string> Read(string path)

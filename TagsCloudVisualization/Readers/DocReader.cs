@@ -6,7 +6,9 @@ public class DocReader : IReader
 {
     public bool CanRead(string pathToFile)
     {
-        return pathToFile.Split('.')[^1].Equals("doc", StringComparison.InvariantCultureIgnoreCase);
+        var isDocFile = pathToFile.Split('.')[^1].Equals("doc", StringComparison.InvariantCultureIgnoreCase);
+        var fileExists = File.Exists(pathToFile);
+        return isDocFile && fileExists;
     }
 
     public List<string> Read(string pathToFile)
