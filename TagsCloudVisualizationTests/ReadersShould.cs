@@ -12,7 +12,7 @@ public class ReadersShould
     {
         var reader = new TxtReader();
 
-        var words = reader.Read("Files/txtFile.txt");
+        var words = reader.Read("Files/txtFile.txt").GetValueOrThrow();
         //На данном этапе мы не удаляем стоп слова, а wordsGetter стал считывать не только буквы,
         //поэтому пришлось "++" и "=" добавить сюда
         words.Should().BeEquivalentTo(["Солнце", "светило", "Ярко", "++", "Наступил", "=", "ДЕНЬ"]);
@@ -23,7 +23,7 @@ public class ReadersShould
     {
         var reader = new DocReader();
 
-        var words = reader.Read("Files/docFile.doc");
+        var words = reader.Read("Files/docFile.doc").GetValueOrThrow();
 
         words.Should().BeEquivalentTo(["Солнце", "светило", "Ярко", "++", "Наступил", "=", "ДЕНЬ"]);
     }
@@ -33,7 +33,7 @@ public class ReadersShould
     {
         var reader = new DocxReader();
 
-        var words = reader.Read("Files/docxFile.docx");
+        var words = reader.Read("Files/docxFile.docx").GetValueOrThrow();
 
         words.Should().BeEquivalentTo(["Солнце", "светило", "Ярко", "++", "Наступил", "=", "ДЕНЬ"]);
     }

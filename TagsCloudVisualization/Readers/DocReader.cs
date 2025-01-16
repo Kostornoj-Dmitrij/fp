@@ -1,4 +1,5 @@
 using Spire.Doc;
+using TagsCloudVisualization.ResultPattern;
 
 namespace TagsCloudVisualization.Readers;
 
@@ -11,18 +12,24 @@ public class DocReader : IReader
         return isDocFile && fileExists;
     }
 
-    public List<string> Read(string pathToFile)
+    public Result<List<string>> Read(string pathToFile)
     {
-        var doc = new Document();
-        doc.LoadFromFile(pathToFile);
+        try
+        {
+            var doc = new Document();
+            doc.LoadFromFile(pathToFile);
 
-        var text = doc.GetText();
-        var paragraphs = text
-            .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
-            .Skip(1);
+            var text = doc.GetText();
+            var paragraphs = text
+                .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
+                .Skip(1);
 
-        var words = WordsGetter.GetWords(paragraphs);
-
-        return words;
+            var words = WordsGetter.GetWords(paragraphs);
+            return Result.Ok(words);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail<List<string>>($"Failed to read .doc file: {ex.Message}");
+        }
     }
 }

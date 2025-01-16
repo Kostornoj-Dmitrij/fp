@@ -1,3 +1,5 @@
+using TagsCloudVisualization.ResultPattern;
+
 namespace TagsCloudVisualization.Readers;
 
 public class TxtReader : IReader
@@ -9,13 +11,19 @@ public class TxtReader : IReader
         return isTxtFile && fileExists;
     }
 
-    public List<string> Read(string pathToFile)
+    public Result<List<string>> Read(string pathToFile)
     {
-        var paragraphs = File.ReadAllText(pathToFile)
-            .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+        try
+        {
+            var paragraphs = File.ReadAllText(pathToFile)
+                .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
 
-        var words = WordsGetter.GetWords(paragraphs);
-
-        return words;
+            var words = WordsGetter.GetWords(paragraphs);
+            return Result.Ok(words);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail<List<string>>($"Failed to read .txt file: {ex.Message}");
+        }
     }
 }

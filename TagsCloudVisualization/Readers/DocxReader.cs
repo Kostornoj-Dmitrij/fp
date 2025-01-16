@@ -1,5 +1,6 @@
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using TagsCloudVisualization.ResultPattern;
 
 namespace TagsCloudVisualization.Readers;
 
@@ -12,15 +13,24 @@ public class DocxReader : IReader
         return isDocxFile && fileExists;
     }
 
-    public List<string> Read(string path)
+    public Result<List<string>> Read(string path)
     {
-        using var doc = WordprocessingDocument.Open(path, false);
+        try
+        {
+            using var doc = WordprocessingDocument.Open(path, false);
 
-        var body = doc.MainDocumentPart?.Document.Body;
-        var paragraphs = body?.Descendants<Text>().Select(text => text.Text);
+            var body = doc.MainDocumentPart?.Document.Body;
+            if (body == null)
+                return Result.Fail<List<string>>("Failed to read .docx file: Document body is null.");
 
-        var words = WordsGetter.GetWords(paragraphs!);
+            var paragraphs = body.Descendants<Text>().Select(text => text.Text);
+            var words = WordsGetter.GetWords(paragraphs);
 
-        return words;
+            return Result.Ok(words);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail<List<string>>($"Failed to read .docx file: {ex.Message}");
+        }
     }
 }

@@ -22,14 +22,21 @@ public class TextHandler : ITextHandler
             return Result.Fail<Dictionary<string, int>>(readerResult.Error);
 
         var reader = readerResult.GetValueOrThrow();
-        var words = reader.Read(_properties.PathToText);
+        var wordsResult = reader.Read(_properties.PathToText);
+        if (!wordsResult.IsSuccess)
+            return Result.Fail<Dictionary<string, int>>(wordsResult.Error);
+        var words = wordsResult.GetValueOrThrow();
 
         var boringWordsReaderResult = GetReader(_properties.PathToBoringWords);
         if (!boringWordsReaderResult.IsSuccess)
             return Result.Fail<Dictionary<string, int>>(boringWordsReaderResult.Error);
 
         var boringWordsReader = boringWordsReaderResult.GetValueOrThrow();
-        var boringWords = boringWordsReader.Read(_properties.PathToBoringWords).ToHashSet();
+        var boringWordsResult = boringWordsReader.Read(_properties.PathToBoringWords);
+        if (!boringWordsResult.IsSuccess)
+            return Result.Fail<Dictionary<string, int>>(boringWordsResult.Error);
+
+        var boringWords = boringWordsResult.GetValueOrThrow().ToHashSet();
 
         return Result.Ok(
             words.Select(word => word.ToLower())
