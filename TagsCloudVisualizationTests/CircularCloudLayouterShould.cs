@@ -19,7 +19,7 @@ public class CircularCloudLayouterShould
     [SetUp]
     public void Setup()
     {
-        _cloudLayouter = new CircularCloudLayouter(new CircularLayout(new CircularLayoutProperties()));
+        _cloudLayouter = new CircularCloudLayouter(CircularLayout.Create(new  CircularLayoutProperties()).GetValueOrThrow());
         _rectangles = [];
     }
 

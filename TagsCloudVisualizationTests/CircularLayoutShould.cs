@@ -11,28 +11,26 @@ namespace TagsCloudVisualizationTests;
 public class CircularLayoutShould
 {
     [Test]
-    public void CircularLayout_ShouldThrowArgumentException_WhenAngleIncreasingStepIsZero()
+    public void CircularLayout_ShouldReturnError_WhenAngleIncreasingStepIsZero()
     {
         var properties = new CircularLayoutProperties(angleIncreasingStep: 0);
 
-        var act = () => { _ = new CircularLayout(properties); };
+        var result = CircularLayout.Create(properties);
 
-        act.Should()
-            .Throw<ArgumentException>()
-            .WithMessage($"AngleIncreasingStep should not be zero. Provided value: 0");
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Be($"AngleIncreasingStep should not be zero. Provided value: 0");
     }
 
     [TestCase(0)]
     [TestCase(-2)]
-    public void CircularLayout_ShouldThrowArgumentException_WhenRadiusIncreasingStepIsInvalid(int radiusIncreasingStep)
+    public void CircularLayout_ShouldReturnError_WhenRadiusIncreasingStepIsInvalid(int radiusIncreasingStep)
     {
         var properties = new CircularLayoutProperties(radiusIncreasingStep: radiusIncreasingStep);
 
-        var act = () => { _ = new CircularLayout(properties); };
+        var result = CircularLayout.Create(properties);
 
-        act.Should()
-            .Throw<ArgumentException>()
-            .WithMessage($"RadiusIncreasingStep should be positive. Provided value: {radiusIncreasingStep}");
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Be($"RadiusIncreasingStep should be positive. Provided value: {radiusIncreasingStep}");
     }
 
     [TestCase(11)]
@@ -41,7 +39,7 @@ public class CircularLayoutShould
     {
         var properties = new CircularLayoutProperties(radiusIncreasingStep: radiusIncreasingStep);
         var circularLayout =
-            new CircularLayout(properties);
+            CircularLayout.Create(properties).GetValueOrThrow();
 
         var firstPoint = circularLayout.CalculateNextPoint();
         var secondPoint = circularLayout.CalculateNextPoint();
@@ -56,8 +54,8 @@ public class CircularLayoutShould
     {
         var radiusIncreasingStep = 1;
         var center = new Point(0, 0);
-        var circularLayout = new CircularLayout(
-            new CircularLayoutProperties(stepIncreasingAngle, radiusIncreasingStep));
+        var circularLayout = CircularLayout.Create(
+            new CircularLayoutProperties(stepIncreasingAngle, radiusIncreasingStep)).GetValueOrThrow();
 
         var firstPoint = circularLayout.CalculateNextPoint();
         var secondPoint = circularLayout.CalculateNextPoint();
