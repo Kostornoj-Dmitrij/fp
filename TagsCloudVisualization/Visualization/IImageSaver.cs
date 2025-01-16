@@ -1,8 +1,9 @@
 using System.Drawing;
+using TagsCloudVisualization.ResultPattern;
 
 namespace TagsCloudVisualization.Visualization;
 
 public interface IImageSaver
 {
-    void Save(Bitmap bitmap);
+    Result<None> Save(Bitmap bitmap);
 }

@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using TagsCloudVisualization.Properties;
+using TagsCloudVisualization.ResultPattern;
 
 namespace TagsCloudVisualization.Visualization;
 
@@ -13,7 +14,7 @@ public class CommonImageSaver : IImageSaver
         _properties = properties;
     }
 
-    public void Save(Bitmap bitmap)
+    public Result<None> Save(Bitmap bitmap)
     {
         var fileName = _properties.FileName;
         var projectDirectory = Directory.GetParent(
@@ -22,32 +23,31 @@ public class CommonImageSaver : IImageSaver
                     Directory.GetParent(
                         AppDomain.CurrentDomain.BaseDirectory)!.FullName)!.FullName)!.FullName)!.FullName;
         var relativePath = Path.Combine(projectDirectory, "Images");
-        var imageFormat = GetImageFormat(_properties.FileFormat);
+        var imageFormatResult = GetImageFormat(_properties.FileFormat);
+
+        if (!imageFormatResult.IsSuccess)
+            return Result.Fail<None>(imageFormatResult.Error);
 
         if (!Directory.Exists(relativePath))
         {
             Directory.CreateDirectory(relativePath);
         }
-        bitmap.Save(Path.Combine(relativePath, $"{fileName}.{_properties.FileFormat}"), imageFormat);
+
+        bitmap.Save(Path.Combine(relativePath, $"{fileName}.{_properties.FileFormat}"), imageFormatResult.Value);
+        return Result.Ok();
     }
 
-    private static ImageFormat GetImageFormat(string format)
+    private static Result<ImageFormat> GetImageFormat(string format)
     {
-        try
-        {
-            if (string.IsNullOrEmpty(format))
-                throw new ArgumentException("Format cannot be null or empty");
+        if (string.IsNullOrEmpty(format))
+            return Result.Fail<ImageFormat>("Format cannot be null or empty");
 
-            var imageFormatConverter = new ImageFormatConverter();
-            var imageFormat = imageFormatConverter.ConvertFromString(format);
+        var imageFormatConverter = new ImageFormatConverter();
+        var imageFormat = imageFormatConverter.ConvertFromString(format);
 
-            if (imageFormat is null)
-                throw new ArgumentException($"Can't handle format: {format}");
-            return (ImageFormat)imageFormat;
-        }
-        catch (NotSupportedException)
-        {
-            throw new NotSupportedException($"File with format {format} doesn't supported");
-        }
+        if (imageFormat is null)
+            return Result.Fail<ImageFormat>($"Can't handle format: {format}");
+
+        return Result.Ok((ImageFormat)imageFormat);
     }
 }
