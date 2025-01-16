@@ -1,5 +1,6 @@
 using System.Drawing;
 using TagsCloudVisualization.Properties;
+using TagsCloudVisualization.ResultPattern;
 
 namespace TagsCloudVisualization.ColorGetter;
 
@@ -14,18 +15,21 @@ public class ColorGetter : IColorGetter
         _random = new Random();
     }
 
-    public Color GetColor()
+    public Result<Color> GetColor()
     {
         if (_colorGetterProperties.ColorName == "random")
         {
-            return Color.FromArgb(_random.Next(255), _random.Next(255), _random.Next(255));
+            return Result.Ok(Color.FromArgb(_random.Next(255), _random.Next(255), _random.Next(255)));
         }
 
         if (WellKnownColors.Colors.TryGetValue(_colorGetterProperties.ColorName, out var customColor))
         {
-            return customColor;
+            return Result.Ok(customColor);
         }
-
-        return Color.FromName(_colorGetterProperties.ColorName);
+        var color = Color.FromName(_colorGetterProperties.ColorName); 
+        if (color.IsKnownColor)
+            return Result.Ok(color);
+        
+        return Result.Fail<Color>($"Color '{_colorGetterProperties.ColorName}' is not found in the color database.");
     }
 }

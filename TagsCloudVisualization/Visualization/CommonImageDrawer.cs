@@ -31,7 +31,13 @@ public class CommonImageDrawer : IImageDrawer
         foreach (var tag in enumerable)
         {
             var font = new Font(tag.Font, tag.Size);
-            var color = new SolidBrush(_colorGenerator.GetColor());
+            var colorResult = _colorGenerator.GetColor();
+            var color = new SolidBrush(Color.Black);
+            if (!colorResult.IsSuccess)
+                Console.WriteLine($"Failed to get color for tag '{tag.Content}': {colorResult.Error}");
+            else
+                color = new SolidBrush(colorResult.GetValueOrThrow());
+
             var rectangle = tag.Rectangle with
             {
                 X = tag.Rectangle.X - minX + 10,

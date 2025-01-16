@@ -1,8 +1,9 @@
 using System.Drawing;
+using TagsCloudVisualization.ResultPattern;
 
 namespace TagsCloudVisualization.ColorGetter;
 
 public interface IColorGetter
 {
-    Color GetColor();
+    Result<Color> GetColor();
 }
