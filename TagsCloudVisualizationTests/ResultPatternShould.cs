@@ -108,11 +108,11 @@ public class ResultPatternShould
     }
 
     [Test]
-    public void Validate_ShouldReturnError_WhenAngleIncreasingStepIsZero()
+    public void Validate_ShouldReturnError_WhenAngleIncreasingStepIsNegative()
     {
         var options = new CommandLineOptions
         {
-            SpiralLayout = new SpiralLayoutOptions { AngleIncreasingStep = 0 }
+            SpiralLayout = new SpiralLayoutOptions { AngleIncreasingStep = -12 }
         };
 
         var result = options.Validate();

@@ -55,10 +55,10 @@ public class CommandLineOptions
         if (MinFontSize > MaxFontSize)
             return Result.Fail<CommandLineOptions>("MinFontSize must be less than or equal to MaxFontSize.");
 
-        if (SpiralLayout.AngleIncreasingStep <= 0)
+        if (SpiralLayout.AngleIncreasingStep < 0)
             return Result.Fail<CommandLineOptions>("AngleIncreasingStep must be positive.");
 
-        if (SpiralLayout.RadiusIncreasingStep <= 0)
+        if (SpiralLayout.RadiusIncreasingStep < 0)
             return Result.Fail<CommandLineOptions>("RadiusIncreasingStep must be positive.");
 
         return Result.Ok(this);

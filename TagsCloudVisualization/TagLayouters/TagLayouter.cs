@@ -30,9 +30,9 @@ public class TagLayouter : ITagLayouter
         if (!wordsCountResult.IsSuccess)
             return Result.Fail<IEnumerable<Tag>>("Error getting words count: " + wordsCountResult.Error);
 
-        if (!IsFontInstalled(_tagLayouterProperties.FontFamily.Name))
+        if (!IsFontInstalled(_tagLayouterProperties.FontName))
             return Result.Fail<IEnumerable<Tag>>(
-                $"Font '{_tagLayouterProperties.FontFamily}' not found in the system.");
+                $"Font '{_tagLayouterProperties.FontName}' not found in the system.");
 
         var wordsCount = wordsCountResult.GetValueOrThrow();
         var minCount = wordsCount.Last().Value;
@@ -46,7 +46,7 @@ public class TagLayouter : ITagLayouter
                 wordWithCount.Key,
                 fontSize,
                 _circularCloudLayouter.PutNextRectangle(GetWordSize(wordWithCount.Key, fontSize)),
-                _tagLayouterProperties.FontFamily
+                new FontFamily(_tagLayouterProperties.FontName)
             ));
         }
 
@@ -66,7 +66,8 @@ public class TagLayouter : ITagLayouter
 
     private Size GetWordSize(string content, int fontSize)
     {
-        var sizeF = _graphics.MeasureString(content, new Font(_tagLayouterProperties.FontFamily, fontSize));
+        var sizeF = _graphics.MeasureString(content, 
+            new Font(new FontFamily(_tagLayouterProperties.FontName), fontSize));
 
         return new Size((int)Math.Ceiling(sizeF.Width), (int)Math.Ceiling(sizeF.Height));
     }
