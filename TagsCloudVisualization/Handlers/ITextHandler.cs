@@ -1,6 +1,8 @@
+using TagsCloudVisualization.ResultPattern;
+
 namespace TagsCloudVisualization.Handlers;
 
 public interface ITextHandler
 {
-    Dictionary<string, int> GetWordsCount();
+    Result<Dictionary<string, int>> GetWordsCount();
 }
