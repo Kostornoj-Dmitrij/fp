@@ -24,16 +24,28 @@ public static class Program
             Environment.Exit(1);
         }
 
-        var container = DiContainer.Configure(commandLineOptions);
+        var containerResult = DiContainer.Configure(commandLineOptions);
+        if (!containerResult.IsSuccess)
+        {
+            Console.WriteLine($"DI container configuration error: {containerResult.Error}");
+            Environment.Exit(1);
+        }
+        var container = containerResult.Value!;
+
         var cloudMaker = container.Resolve<TagsCloudMaker>();
         var imageResult = cloudMaker.MakeImage();
         if (!imageResult.IsSuccess)
         {
-            Console.WriteLine($"An error occurred: {imageResult.Error}");
+            Console.WriteLine($"Failed to create the image: {imageResult.Error}");
             Environment.Exit(1);
         }
         var imageSaver = container.Resolve<IImageSaver>();
-        imageSaver.Save(imageResult.Value!);
+        var saveResult = imageSaver.Save(imageResult.Value!);
+        if (!saveResult.IsSuccess)
+        {
+            Console.WriteLine($"Failed to save the image: {saveResult.Error}");
+            Environment.Exit(1);
+        }
     }
 
     private static void HandleErrors(IEnumerable<Error> errors)
