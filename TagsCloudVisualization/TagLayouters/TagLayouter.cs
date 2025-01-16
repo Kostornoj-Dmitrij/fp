@@ -23,7 +23,15 @@ public class TagLayouter : ITagLayouter
 
     public IEnumerable<Tag> GetTags()
     {
-        var wordsCount = _textHandler.GetWordsCount();
+        var wordsCountResult = _textHandler.GetWordsCount();
+
+        if (!wordsCountResult.IsSuccess)
+        {
+            Console.WriteLine("Error getting words count: " + wordsCountResult.Error);
+            yield break;
+        }
+        
+        var wordsCount = wordsCountResult.GetValueOrThrow();
         var minCount = wordsCount.Last().Value;
         var maxCount = wordsCount.First().Value;
 
