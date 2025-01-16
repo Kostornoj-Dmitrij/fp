@@ -17,6 +17,12 @@ public static class Program
 
     private static void RunApplication(CommandLineOptions commandLineOptions)
     {
+        var validationResult = commandLineOptions.Validate();
+        if (!validationResult.IsSuccess)
+        {
+            Console.WriteLine($"Options validation error: {validationResult.Error}");
+            Environment.Exit(1);
+        }
         var container = DiContainer.Configure(commandLineOptions);
         var cloudMaker = container.Resolve<TagsCloudMaker>();
         var imageResult = cloudMaker.MakeImage();

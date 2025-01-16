@@ -1,4 +1,5 @@
 using CommandLine;
+using TagsCloudVisualization.ResultPattern;
 
 namespace TagsCloudVisualization.Options;
 
@@ -7,8 +8,8 @@ public class CommandLineOptions
     [Option('t', "pathToText", Default = "textForCloud.txt", HelpText = "Path to text for tags cloud")]
     public string? PathToText { get; set; }
 
-    [Option('s', "pathToSaveDirectory", Default = "/Images", 
-                                                            HelpText = "Where we will save images to")]
+    [Option('s', "pathToSaveDirectory", Default = "/Images",
+        HelpText = "Where we will save images to")]
     public string? PathToSaveDirectory { get; set; }
 
     [Option('n', "fileName", Default = "image", HelpText = "Name of the file to save")]
@@ -42,4 +43,24 @@ public class CommandLineOptions
     public int MaxFontSize { get; set; }
 
     public SpiralLayoutOptions SpiralLayout { get; set; } = new SpiralLayoutOptions();
+
+    public Result<CommandLineOptions> Validate()
+    {
+        if (ImageWidth < 0 || ImageHeight < 0)
+            return Result.Fail<CommandLineOptions>("Image width and height must be positive.");
+
+        if (MinFontSize < 0 || MaxFontSize < 0)
+            return Result.Fail<CommandLineOptions>("Font sizes must be positive.");
+
+        if (MinFontSize > MaxFontSize)
+            return Result.Fail<CommandLineOptions>("MinFontSize must be less than or equal to MaxFontSize.");
+
+        if (SpiralLayout.AngleIncreasingStep <= 0)
+            return Result.Fail<CommandLineOptions>("AngleIncreasingStep must be positive.");
+
+        if (SpiralLayout.RadiusIncreasingStep <= 0)
+            return Result.Fail<CommandLineOptions>("RadiusIncreasingStep must be positive.");
+
+        return Result.Ok(this);
+    }
 }
