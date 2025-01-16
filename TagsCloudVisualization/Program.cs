@@ -17,20 +17,16 @@ public static class Program
 
     private static void RunApplication(CommandLineOptions commandLineOptions)
     {
-        try
+        var container = DiContainer.Configure(commandLineOptions);
+        var cloudMaker = container.Resolve<TagsCloudMaker>();
+        var imageResult = cloudMaker.MakeImage();
+        if (!imageResult.IsSuccess)
         {
-            var container = DiContainer.Configure(commandLineOptions);
-            var cloudMaker = container.Resolve<TagsCloudMaker>();
-            var image = cloudMaker.MakeImage();
-            var imageSaver = container.Resolve<IImageSaver>();
-
-            imageSaver.Save(image);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"An error occurred: {ex.Message}");
+            Console.WriteLine($"An error occurred: {imageResult.Error}");
             Environment.Exit(1);
         }
+        var imageSaver = container.Resolve<IImageSaver>();
+        imageSaver.Save(imageResult.Value);
     }
 
     private static void HandleErrors(IEnumerable<Error> errors)

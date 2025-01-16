@@ -1,6 +1,7 @@
 using System.Drawing;
 using TagsCloudVisualization.ColorGetter;
 using TagsCloudVisualization.Properties;
+using TagsCloudVisualization.ResultPattern;
 using TagsCloudVisualization.TagLayouters;
 
 namespace TagsCloudVisualization.Visualization;
@@ -16,7 +17,7 @@ public class CommonImageDrawer : IImageDrawer
         _colorGenerator = colorGenerator;
     }
 
-    public Bitmap Draw(IEnumerable<Tag> tags)
+    public Result<Bitmap> Draw(IEnumerable<Tag> tags)
     {
         var enumerable = tags.ToList();
         var (minX, minY, maxX, maxY) = CalculateBounds(enumerable);
@@ -39,7 +40,7 @@ public class CommonImageDrawer : IImageDrawer
 
             graphics.DrawString(tag.Content, font, color, rectangle);
         }
-        return bitmap;
+        return Result.Ok(bitmap);
     }
 
     private (int minX, int minY, int maxX, int maxY) CalculateBounds(IEnumerable<Tag> tags)

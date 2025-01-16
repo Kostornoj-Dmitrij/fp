@@ -1,9 +1,10 @@
 using System.Drawing;
+using TagsCloudVisualization.ResultPattern;
 using TagsCloudVisualization.TagLayouters;
 
 namespace TagsCloudVisualization.Visualization;
 
 public interface IImageDrawer
 {
-    Bitmap Draw(IEnumerable<Tag> tags);
+    Result<Bitmap> Draw(IEnumerable<Tag> tags);
 }

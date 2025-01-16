@@ -2,6 +2,7 @@ using System.Drawing;
 using TagsCloudVisualization.CloudLayouters;
 using TagsCloudVisualization.Handlers;
 using TagsCloudVisualization.Properties;
+using TagsCloudVisualization.ResultPattern;
 
 namespace TagsCloudVisualization.TagLayouters;
 
@@ -21,28 +22,32 @@ public class TagLayouter : ITagLayouter
         _graphics = Graphics.FromHwnd(IntPtr.Zero);
     }
 
-    public IEnumerable<Tag> GetTags()
+    public Result<IEnumerable<Tag>> GetTags()
     {
         var wordsCountResult = _textHandler.GetWordsCount();
 
         if (!wordsCountResult.IsSuccess)
         {
-            Console.WriteLine("Error getting words count: " + wordsCountResult.Error);
-            yield break;
+            return Result.Fail<IEnumerable<Tag>>("Error getting words count: " + wordsCountResult.Error);
         }
-        
+
         var wordsCount = wordsCountResult.GetValueOrThrow();
         var minCount = wordsCount.Last().Value;
         var maxCount = wordsCount.First().Value;
 
+        var tags = new List<Tag>();
         foreach (var wordWithCount in wordsCount)
         {
             var fontSize = GetFontSize(minCount, maxCount, wordWithCount.Value);
-            yield return new Tag(wordWithCount.Key, 
+            tags.Add(new Tag(
+                wordWithCount.Key,
                 fontSize,
                 _circularCloudLayouter.PutNextRectangle(GetWordSize(wordWithCount.Key, fontSize)),
-                _tagLayouterProperties.FontFamily);
+                _tagLayouterProperties.FontFamily
+            ));
         }
+
+        return Result.Ok<IEnumerable<Tag>>(tags);
     }
 
     private int GetFontSize(int minWordCount, int maxWordCount, int wordCount)

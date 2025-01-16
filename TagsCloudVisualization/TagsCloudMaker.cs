@@ -1,4 +1,5 @@
 using System.Drawing;
+using TagsCloudVisualization.ResultPattern;
 using TagsCloudVisualization.TagLayouters;
 using TagsCloudVisualization.Visualization;
 
@@ -15,11 +16,16 @@ public class TagsCloudMaker
         _imageDrawer = imageDrawer;
     }
 
-    public Bitmap MakeImage()
+    public Result<Bitmap> MakeImage()
     {
-        var tags = _tagLayouter.GetTags();
-        var bitmap = _imageDrawer.Draw(tags);
+        var tagsResult = _tagLayouter.GetTags();
+        if (!tagsResult.IsSuccess)
+            return Result.Fail<Bitmap>(tagsResult.Error);
 
-        return bitmap;
+        var bitmapResult = _imageDrawer.Draw(tagsResult.Value);
+        if (!bitmapResult.IsSuccess)
+            return Result.Fail<Bitmap>(bitmapResult.Error);
+
+        return bitmapResult;
     }
 }

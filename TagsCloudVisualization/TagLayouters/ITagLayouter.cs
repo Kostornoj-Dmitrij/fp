@@ -1,6 +1,8 @@
+using TagsCloudVisualization.ResultPattern;
+
 namespace TagsCloudVisualization.TagLayouters;
 
 public interface ITagLayouter
 {
-    IEnumerable<Tag> GetTags();
+    Result<IEnumerable<Tag>> GetTags();
 }
