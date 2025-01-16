@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Drawing.Text;
 using TagsCloudVisualization.CloudLayouters;
 using TagsCloudVisualization.Handlers;
 using TagsCloudVisualization.Properties;
@@ -29,6 +30,11 @@ public class TagLayouter : ITagLayouter
         if (!wordsCountResult.IsSuccess)
         {
             return Result.Fail<IEnumerable<Tag>>("Error getting words count: " + wordsCountResult.Error);
+        }
+
+        if (!IsFontInstalled(_tagLayouterProperties.FontFamily.Name))
+        {
+            return Result.Fail<IEnumerable<Tag>>($"Font '{_tagLayouterProperties.FontFamily}' not found in the system.");
         }
 
         var wordsCount = wordsCountResult.GetValueOrThrow();
@@ -66,5 +72,17 @@ public class TagLayouter : ITagLayouter
         var sizeF = _graphics.MeasureString(content, new Font(_tagLayouterProperties.FontFamily, fontSize));
 
         return new Size((int)Math.Ceiling(sizeF.Width), (int)Math.Ceiling(sizeF.Height));
+    }
+    
+    private bool IsFontInstalled(string fontName)
+    {
+        foreach (var fontFamily in new InstalledFontCollection().Families)
+        {
+            if (fontFamily.Name.Equals(fontName, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

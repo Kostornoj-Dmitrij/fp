@@ -1,10 +1,14 @@
+using System.Drawing;
 using FluentAssertions;
 using NUnit.Framework;
+using TagsCloudVisualization.CloudLayouters;
 using TagsCloudVisualization.ColorGetter;
 using TagsCloudVisualization.Handlers;
+using TagsCloudVisualization.Layouts;
 using TagsCloudVisualization.Options;
 using TagsCloudVisualization.Properties;
 using TagsCloudVisualization.Readers;
+using TagsCloudVisualization.TagLayouters;
 
 
 namespace TagsCloudVisualizationTests;
@@ -12,6 +16,22 @@ namespace TagsCloudVisualizationTests;
 [TestFixture]
 public class ResultPatternShould
 {
+    private IReader[] _readers;
+    private TextHandlerProperties _textHandlerProperties;
+    private TextHandler _textHandler;
+    private ICircularCloudLayouter _circularCloudLayouter;
+
+    [SetUp]
+    public void SetUp()
+    {
+        _readers = new IReader[] { new TxtReader(), new DocReader() };
+        _textHandlerProperties = new TextHandlerProperties("Files/txtFile.txt", "Files/txtFile.txt");
+        _textHandler = new TextHandler(_readers, _textHandlerProperties);
+        _circularCloudLayouter = new CircularCloudLayouter(
+            CircularLayout.Create(new CircularLayoutProperties()).GetValueOrThrow()
+        );
+    }
+
     [Test]
     public void GetColor_ShouldReturnError_WhenColorNameIsNotFound()
     {
@@ -28,9 +48,8 @@ public class ResultPatternShould
     [TestCase("Files/txtFile.txt", "Files/nonexistent_boring.txt", "There is no file in Files/nonexistent_boring.txt")]
     public void GetWordsCount_ShouldReturnError_WhenFileNotFound(string textFilePath, string boringWordsFilePath, string expectedError)
     {
-        var readers = new IReader[] { new TxtReader(), new DocReader() };
         var properties = new TextHandlerProperties(textFilePath, boringWordsFilePath);
-        var textHandler = new TextHandler(readers, properties);
+        var textHandler = new TextHandler(_readers, properties);
 
         var result = textHandler.GetWordsCount();
 
@@ -90,5 +109,18 @@ public class ResultPatternShould
 
         result.IsSuccess.Should().BeTrue();
         result.GetValueOrThrow().Should().Be(options);
+    }
+    
+    [Test]
+    public void GetTags_ShouldReturnError_WhenFontIsNotFound()
+    {
+        var fontFamily = new FontFamily("NonExistentFont");
+        var properties = new TagLayouterProperties(10, 50, fontFamily.Name);
+        var tagLayouter = new TagLayouter(_circularCloudLayouter, _textHandler, properties);
+
+        var result = tagLayouter.GetTags();
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Be($"Font '{fontFamily.Name}' not found in the system.");
     }
 }
