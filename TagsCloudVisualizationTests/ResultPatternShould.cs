@@ -142,13 +142,13 @@ public class ResultPatternShould
     [Test]
     public void GetTags_ShouldReturnError_WhenFontIsNotFound()
     {
-        var fontFamily = new FontFamily("NonExistentFont");
-        var properties = new TagLayouterProperties(10, 50, fontFamily.Name);
+        var fontName = "NonExistentFont";
+        var properties = new TagLayouterProperties(10, 50, fontName);
         var tagLayouter = new TagLayouter(_circularCloudLayouter, _textHandler, properties);
 
         var result = tagLayouter.GetTags();
 
         result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be($"Font '{fontFamily.Name}' not found in the system.");
+        result.Error.Should().Be($"Font '{fontName}' not found in the system.");
     }
 }
