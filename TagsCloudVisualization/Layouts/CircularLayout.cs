@@ -22,10 +22,12 @@ public class CircularLayout : ILayout
     public static Result<CircularLayout> Create(CircularLayoutProperties properties)
     {
         if (properties.AngleIncreasingStep == 0)
-            return Result.Fail<CircularLayout>($"AngleIncreasingStep should not be zero. Provided value: {properties.AngleIncreasingStep}");
+            return Result.Fail<CircularLayout>(
+                $"AngleIncreasingStep should not be zero. Provided value: {properties.AngleIncreasingStep}");
 
         if (properties.RadiusIncreasingStep <= 0)
-            return Result.Fail<CircularLayout>($"RadiusIncreasingStep should be positive. Provided value: {properties.RadiusIncreasingStep}");
+            return Result.Fail<CircularLayout>(
+                $"RadiusIncreasingStep should be positive. Provided value: {properties.RadiusIncreasingStep}");
 
         return Result.Ok(new CircularLayout(properties));
     }

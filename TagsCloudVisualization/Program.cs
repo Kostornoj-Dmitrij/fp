@@ -23,6 +23,7 @@ public static class Program
             Console.WriteLine($"Options validation error: {validationResult.Error}");
             Environment.Exit(1);
         }
+
         var container = DiContainer.Configure(commandLineOptions);
         var cloudMaker = container.Resolve<TagsCloudMaker>();
         var imageResult = cloudMaker.MakeImage();
@@ -32,7 +33,7 @@ public static class Program
             Environment.Exit(1);
         }
         var imageSaver = container.Resolve<IImageSaver>();
-        imageSaver.Save(imageResult.Value);
+        imageSaver.Save(imageResult.Value!);
     }
 
     private static void HandleErrors(IEnumerable<Error> errors)

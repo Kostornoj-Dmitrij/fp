@@ -9,7 +9,8 @@ public class WordsGetter
         foreach (var paragraph in paragraphsOfText)
         {
             var paragraphWords = paragraph
-                .Split(new[] { ' ', '\t', '\n', '\r', '.', ',', ';', ':', '!', '?', '"', '(', ')', '[', ']', '{', '}', '-', '/' }, StringSplitOptions.RemoveEmptyEntries)
+                .Split(new[] { ' ', '\t', '\n', '\r', '.', ',', ';', ':', '!', '?', '"', '(', ')', 
+                        '[', ']', '{', '}', '-', '/' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(word => word.Trim());
 
             words.AddRange(paragraphWords);

@@ -10,29 +10,6 @@ namespace TagsCloudVisualizationTests;
 [TestFixture]
 public class CircularLayoutShould
 {
-    [Test]
-    public void CircularLayout_ShouldReturnError_WhenAngleIncreasingStepIsZero()
-    {
-        var properties = new CircularLayoutProperties(angleIncreasingStep: 0);
-
-        var result = CircularLayout.Create(properties);
-
-        result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be($"AngleIncreasingStep should not be zero. Provided value: 0");
-    }
-
-    [TestCase(0)]
-    [TestCase(-2)]
-    public void CircularLayout_ShouldReturnError_WhenRadiusIncreasingStepIsInvalid(int radiusIncreasingStep)
-    {
-        var properties = new CircularLayoutProperties(radiusIncreasingStep: radiusIncreasingStep);
-
-        var result = CircularLayout.Create(properties);
-
-        result.IsSuccess.Should().BeFalse();
-        result.Error.Should().Be($"RadiusIncreasingStep should be positive. Provided value: {radiusIncreasingStep}");
-    }
-
     [TestCase(11)]
     [TestCase(57)]
     public void CircularLayout_ShouldIncreaseRadiusCorrectly_WhenCalculatePoints(int radiusIncreasingStep)

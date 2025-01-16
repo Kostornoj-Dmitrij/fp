@@ -22,7 +22,7 @@ public class TagsCloudMaker
         if (!tagsResult.IsSuccess)
             return Result.Fail<Bitmap>(tagsResult.Error);
 
-        var bitmapResult = _imageDrawer.Draw(tagsResult.Value);
+        var bitmapResult = _imageDrawer.Draw(tagsResult.Value!);
         if (!bitmapResult.IsSuccess)
             return Result.Fail<Bitmap>(bitmapResult.Error);
 

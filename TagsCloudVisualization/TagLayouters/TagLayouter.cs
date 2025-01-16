@@ -28,14 +28,11 @@ public class TagLayouter : ITagLayouter
         var wordsCountResult = _textHandler.GetWordsCount();
 
         if (!wordsCountResult.IsSuccess)
-        {
             return Result.Fail<IEnumerable<Tag>>("Error getting words count: " + wordsCountResult.Error);
-        }
 
         if (!IsFontInstalled(_tagLayouterProperties.FontFamily.Name))
-        {
-            return Result.Fail<IEnumerable<Tag>>($"Font '{_tagLayouterProperties.FontFamily}' not found in the system.");
-        }
+            return Result.Fail<IEnumerable<Tag>>(
+                $"Font '{_tagLayouterProperties.FontFamily}' not found in the system.");
 
         var wordsCount = wordsCountResult.GetValueOrThrow();
         var minCount = wordsCount.Last().Value;

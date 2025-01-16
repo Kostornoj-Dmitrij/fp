@@ -19,7 +19,8 @@ public class ColorGetter : IColorGetter
     {
         if (_colorGetterProperties.ColorName == "random")
         {
-            return Result.Ok(Color.FromArgb(_random.Next(255), _random.Next(255), _random.Next(255)));
+            return Result.Ok(Color.FromArgb(_random.Next(255), 
+                _random.Next(255), _random.Next(255)));
         }
 
         if (WellKnownColors.Colors.TryGetValue(_colorGetterProperties.ColorName, out var customColor))
@@ -29,7 +30,7 @@ public class ColorGetter : IColorGetter
         var color = Color.FromName(_colorGetterProperties.ColorName); 
         if (color.IsKnownColor)
             return Result.Ok(color);
-        
+
         return Result.Fail<Color>($"Color '{_colorGetterProperties.ColorName}' is not found in the color database.");
     }
 }

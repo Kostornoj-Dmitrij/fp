@@ -25,11 +25,35 @@ public class ResultPatternShould
     public void SetUp()
     {
         _readers = new IReader[] { new TxtReader(), new DocReader() };
-        _textHandlerProperties = new TextHandlerProperties("Files/txtFile.txt", "Files/txtFile.txt");
+        _textHandlerProperties = new TextHandlerProperties("Files/txtFile.txt", 
+                                                                    "Files/txtFile.txt");
         _textHandler = new TextHandler(_readers, _textHandlerProperties);
         _circularCloudLayouter = new CircularCloudLayouter(
             CircularLayout.Create(new CircularLayoutProperties()).GetValueOrThrow()
         );
+    }
+
+    [Test]
+    public void CircularLayout_ShouldReturnError_WhenAngleIncreasingStepIsZero()
+    {
+        var properties = new CircularLayoutProperties(angleIncreasingStep: 0);
+
+        var result = CircularLayout.Create(properties);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Be($"AngleIncreasingStep should not be zero. Provided value: 0");
+    }
+
+    [TestCase(0)]
+    [TestCase(-2)]
+    public void CircularLayout_ShouldReturnError_WhenRadiusIncreasingStepIsInvalid(int radiusIncreasingStep)
+    {
+        var properties = new CircularLayoutProperties(radiusIncreasingStep: radiusIncreasingStep);
+
+        var result = CircularLayout.Create(properties);
+
+        result.IsSuccess.Should().BeFalse();
+        result.Error.Should().Be($"RadiusIncreasingStep should be positive. Provided value: {radiusIncreasingStep}");
     }
 
     [Test]
@@ -44,11 +68,15 @@ public class ResultPatternShould
         result.Error.Should().Be("Color 'UnknownColor' is not found in the color database.");
     }
     
-    [TestCase("Files/nonexistent.txt", "Files/txtFile.txt", "There is no file in Files/nonexistent.txt")]
-    [TestCase("Files/txtFile.txt", "Files/nonexistent_boring.txt", "There is no file in Files/nonexistent_boring.txt")]
-    public void GetWordsCount_ShouldReturnError_WhenFileNotFound(string textFilePath, string boringWordsFilePath, string expectedError)
+    [TestCase("Files/nonexistent.txt", 
+        "Files/txtFile.txt", 
+        "There is no file in Files/nonexistent.txt")]
+    [TestCase("Files/txtFile.txt", 
+        "Files/nonexistent_boring.txt", 
+        "There is no file in Files/nonexistent_boring.txt")]
+    public void GetWordsCount_ShouldReturnError_WhenFileNotFound(string file, string boringFile, string expectedError)
     {
-        var properties = new TextHandlerProperties(textFilePath, boringWordsFilePath);
+        var properties = new TextHandlerProperties(file, boringFile);
         var textHandler = new TextHandler(_readers, properties);
 
         var result = textHandler.GetWordsCount();

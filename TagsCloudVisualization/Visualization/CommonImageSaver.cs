@@ -33,7 +33,8 @@ public class CommonImageSaver : IImageSaver
             Directory.CreateDirectory(relativePath);
         }
 
-        bitmap.Save(Path.Combine(relativePath, $"{fileName}.{_properties.FileFormat}"), imageFormatResult.Value);
+        bitmap.Save(Path.Combine(relativePath, 
+            $"{fileName}.{_properties.FileFormat}"), imageFormatResult.Value!);
         return Result.Ok();
     }
 
