@@ -27,7 +27,7 @@ public static class DiContainer
             var container = builder.Build();
             return Result.Ok(container);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return Result.Fail<IContainer>("An error occurred during application configuration." +
                                            " Please check your input data and try again.");
@@ -38,40 +38,40 @@ public static class DiContainer
     {
         builder.RegisterType<TextHandlerProperties>().WithParameters(new[]
         {
-            new NamedParameter("pathToBoringWords", options.PathToBoringWords),
-            new NamedParameter("pathToText", options.PathToText)
+            new NamedParameter(ParameterNames.PathToBoringWords, options.PathToBoringWords),
+            new NamedParameter(ParameterNames.PathToText, options.PathToText)
         });
 
         builder.RegisterType<ColorGetterProperties>().WithParameters(new[]
         {
-            new NamedParameter("colorName", options.Color)
+            new NamedParameter(ParameterNames.ColorName, options.Color)
         });
 
         builder.RegisterType<SaveProperties>().WithParameters(new[]
         {
-            new NamedParameter("filePath", options.PathToSaveDirectory),
-            new NamedParameter("fileName", options.FileName),
-            new NamedParameter("fileFormat", options.FileFormat)
+            new NamedParameter(ParameterNames.FilePath, options.PathToSaveDirectory),
+            new NamedParameter(ParameterNames.FileName, options.FileName),
+            new NamedParameter(ParameterNames.FileFormat, options.FileFormat)
         });
 
         builder.RegisterType<ImageProperties>().WithParameters(new[]
         {
-            new NamedParameter("width", options.ImageWidth),
-            new NamedParameter("height", options.ImageHeight),
-            new NamedParameter("colorName", options.BackgroundColor)
+            new NamedParameter(ParameterNames.Width, options.ImageWidth),
+            new NamedParameter(ParameterNames.Height, options.ImageHeight),
+            new NamedParameter(ParameterNames.ColorName, options.BackgroundColor)
         });
 
         builder.RegisterType<CircularLayoutProperties>().WithParameters(new[]
         {
-            new NamedParameter("AngleIncreasingStep", options.SpiralLayout.AngleIncreasingStep),
-            new NamedParameter("RadiusIncreasingStep", options.SpiralLayout.RadiusIncreasingStep)
+            new NamedParameter(ParameterNames.AngleIncreasingStep, options.SpiralLayout.AngleIncreasingStep),
+            new NamedParameter(ParameterNames.RadiusIncreasingStep, options.SpiralLayout.RadiusIncreasingStep)
         });
 
         builder.RegisterType<TagLayouterProperties>().WithParameters(new[]
         {
-            new NamedParameter("fontName", options.Font),
-            new NamedParameter("minSize", options.MinFontSize),
-            new NamedParameter("maxSize", options.MaxFontSize)
+            new NamedParameter(ParameterNames.FontName, options.Font),
+            new NamedParameter(ParameterNames.MinFontSize, options.MinFontSize),
+            new NamedParameter(ParameterNames.MaxFontSize, options.MaxFontSize)
         });
     }
 

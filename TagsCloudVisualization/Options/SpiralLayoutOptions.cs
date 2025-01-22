@@ -5,10 +5,10 @@ namespace TagsCloudVisualization.Options;
 
 public class SpiralLayoutOptions
 {
-    [Option("angleIncreasingStep", Default = CircularLayoutProperties.OneDegree, 
+    [Option(ParameterNames.AngleIncreasingStep, Default = CircularLayoutProperties.OneDegree, 
         HelpText = "Delta angle for the spiral")]
     public double AngleIncreasingStep { get; set; }
 
-    [Option("radiusIncreasingStep", Default = 1, HelpText = "Delta radius for the spiral")]
+    [Option(ParameterNames.RadiusIncreasingStep, Default = 1, HelpText = "Delta radius for the spiral")]
     public double RadiusIncreasingStep { get; set; }
 }
