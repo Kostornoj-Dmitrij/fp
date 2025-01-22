@@ -18,25 +18,33 @@ public static class Program
 
     private static void RunApplication(CommandLineOptions commandLineOptions)
     {
-        commandLineOptions
-            .Validate()
-            .Then(DiContainer.Configure)
-            .Then(container =>
-            {
-                var cloudMaker = container.Resolve<TagsCloudMaker>();
-                return cloudMaker.MakeImage();
-            })
-            .Then(image =>
-            {
-                var containerResult = DiContainer.Configure(commandLineOptions).Value!;
-                var imageSaver = containerResult.Resolve<IImageSaver>();
-                return imageSaver.Save(image);
-            })
-            .OnFail(error =>
-            {
-                Console.WriteLine($"Error: {error}");
-                Environment.Exit(1);
-            });
+        try
+        {
+            commandLineOptions
+                .Validate()
+                .Then(DiContainer.Configure)
+                .Then(container =>
+                {
+                    var cloudMaker = container.Resolve<TagsCloudMaker>();
+                    return cloudMaker.MakeImage();
+                })
+                .Then(image =>
+                {
+                    var containerResult = DiContainer.Configure(commandLineOptions).Value!;
+                    var imageSaver = containerResult.Resolve<IImageSaver>();
+                    return imageSaver.Save(image);
+                })
+                .OnFail(error =>
+                {
+                    Console.WriteLine($"Error: {error}");
+                    Environment.Exit(1);
+                });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unhandled exception: {ex.Message}");
+            Environment.Exit(1);
+        }
     }
 
     private static void HandleErrors(IEnumerable<Error> errors)
