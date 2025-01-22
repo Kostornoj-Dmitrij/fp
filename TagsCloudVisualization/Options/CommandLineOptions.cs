@@ -47,21 +47,39 @@ public class CommandLineOptions
 
     public Result<CommandLineOptions> Validate()
     {
+        return ValidateImageDimensions()
+            .Then(_ => ValidateFontSizes())
+            .Then(_ => ValidateFontSizeRange())
+            .Then(_ => ValidateSpiralLayoutSteps());
+    }
+
+    private Result<CommandLineOptions> ValidateImageDimensions()
+    {
         if (ImageWidth < 0 || ImageHeight < 0)
             return Result.Fail<CommandLineOptions>("Image width and height must be positive.");
+        return Result.Ok(this);
+    }
 
+    private Result<CommandLineOptions> ValidateFontSizes()
+    {
         if (MinFontSize < 0 || MaxFontSize < 0)
             return Result.Fail<CommandLineOptions>("Font sizes must be positive.");
+        return Result.Ok(this);
+    }
 
+    private Result<CommandLineOptions> ValidateFontSizeRange()
+    {
         if (MinFontSize > MaxFontSize)
             return Result.Fail<CommandLineOptions>("MinFontSize must be less than or equal to MaxFontSize.");
+        return Result.Ok(this);
+    }
 
+    private Result<CommandLineOptions> ValidateSpiralLayoutSteps()
+    {
         if (SpiralLayout.AngleIncreasingStep < 0)
             return Result.Fail<CommandLineOptions>("AngleIncreasingStep must be positive.");
-
         if (SpiralLayout.RadiusIncreasingStep < 0)
             return Result.Fail<CommandLineOptions>("RadiusIncreasingStep must be positive.");
-
         return Result.Ok(this);
     }
 }
